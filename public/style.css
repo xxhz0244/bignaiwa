@@ -50,7 +50,7 @@ body {
 }
 
 /* ---------------- 北师大校徽背景水印 ---------------- */
-/* 固定在背后、超大、低透明度；游戏区是实色卡片不会被挡，
+/* 钉在左上角，尺寸收小、透明度略提；游戏区是实色卡片不会被挡，
    校徽只从四周留白与半透明面板里透出来，点题但不干扰操作。
    官方校徽是白底蓝章，用 multiply 混合让白底自动隐去、只留蓝章。 */
 body::before {
@@ -59,8 +59,9 @@ body::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: url("assets/bnu-emblem.png") center / min(72vmin, 640px) no-repeat;
-  opacity: .15;
+  background: url("assets/bnu-emblem.png")
+              left 16px top 16px / min(26vmin, 200px) no-repeat;
+  opacity: .18;
   mix-blend-mode: multiply;
 }
 
@@ -486,6 +487,107 @@ body::before {
 
 .help-body b { color: var(--ink); font-weight: 700; }
 
+/* ---------------- 《奶龙学》入口（标题旁） ---------------- */
+
+.title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.book-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #9E1B32;                      /* 跟校徽同色，呼应 */
+  cursor: pointer;
+  border: 1px solid rgba(158, 27, 50, .3);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .88);
+  box-shadow: 0 4px 12px rgba(140, 96, 56, .12);
+  transition: transform .12s ease, box-shadow .12s ease, background .2s ease;
+}
+
+.book-link:hover {
+  transform: translateY(-1px);
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(158, 27, 50, .2);
+}
+
+.book-link:active { transform: translateY(1px); }
+
+.book-short { display: none; }         /* 手机上换成短标题 */
+
+/* ---------------- 《奶龙学》阅读器 ---------------- */
+
+.book-card {
+  width: min(560px, 100%);
+  max-height: min(760px, calc(var(--vh) - 24px));
+}
+
+.book-viewer {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 200px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 8px;
+  border-radius: 14px;
+  background: #f6efe6;
+}
+
+.book-page {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(60, 32, 12, .18);
+}
+
+.book-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.book-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.book-indicator {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
+.book-foot .btn { flex: 0 0 auto; padding: 8px 14px; }
+
+.book-dl {
+  margin: 8px 0 0;
+  font-size: 12px;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.book-dl a { color: var(--brand); }
+
+.book-tip { margin-left: 6px; }
+
 /* 排行榜弹窗里的昵称行 */
 .nick-row {
   display: flex;
@@ -731,10 +833,16 @@ body::before {
     -webkit-backdrop-filter: blur(10px);
   }
 
-  .panel-head,
+  /* 手机上标题和副标题收起来，但《奶龙学》入口要留着 */
+  .panel-head h1,
+  .panel-head .subtitle,
   .next-box,
   .chain-box,
   .tips { display: none; }
+
+  .book-full { display: none; }
+  .book-short { display: inline; }
+  .book-link { padding: 5px 10px; font-size: 12px; }
 
   .stats {
     flex: 1 1 auto;
