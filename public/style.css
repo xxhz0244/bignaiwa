@@ -480,11 +480,12 @@ body {
   flex-wrap: wrap;
 }
 
-/* 标题右侧的小校徽（已去白底，透明 PNG） */
+/* 标题右侧的校徽（已去白底，透明 PNG）
+   尺寸 = 标题字号(26px) × 2.5 ≈ 65px，即「一个字的边长」的 2.5 倍 */
 .title-emblem {
   flex: 0 0 auto;
-  width: 30px;
-  height: 30px;
+  width: 65px;
+  height: 65px;
   align-self: center;
   opacity: .95;
 }
@@ -836,7 +837,8 @@ body {
   .book-full { display: none; }
   .book-short { display: inline; }
   .book-link { padding: 5px 10px; font-size: 12px; }
-  .title-emblem { width: 24px; height: 24px; }
+  /* 手机上标题字被隐藏，按比例缩小，别把顶栏撑爆 */
+  .title-emblem { width: 34px; height: 34px; }
 
   .stats {
     flex: 1 1 auto;
