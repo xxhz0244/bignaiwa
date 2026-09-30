@@ -51,15 +51,17 @@ body {
 
 /* ---------------- 北师大校徽背景水印 ---------------- */
 /* 固定在背后、超大、低透明度；游戏区是实色卡片不会被挡，
-   校徽只从四周留白与半透明面板里透出来，点题但不干扰操作。 */
+   校徽只从四周留白与半透明面板里透出来，点题但不干扰操作。
+   官方校徽是白底蓝章，用 multiply 混合让白底自动隐去、只留蓝章。 */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: url("assets/bnu-emblem.svg") center / min(72vmin, 640px) no-repeat;
-  opacity: .07;
+  background: url("assets/bnu-emblem.png") center / min(72vmin, 640px) no-repeat;
+  opacity: .15;
+  mix-blend-mode: multiply;
 }
 
 .app {
