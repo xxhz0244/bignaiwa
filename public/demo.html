@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>合成大奶娃 · 书院积分榜</title>
+<style>
+  :root { --bg:#f6f7fb; --card:#fff; --line:#e6e8ef; --txt:#1f2233; --sub:#6b7080; --brand:#1a73e8; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt);
+         font-family:system-ui,"PingFang SC","Microsoft YaHei",sans-serif; padding:20px 16px 60px; }
+  .wrap { max-width:680px; margin:0 auto; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .sub { color:var(--sub); font-size:13px; margin-bottom:20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:16px; }
+  .card h2 { font-size:15px; margin:0 0 12px; font-weight:600; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  button { padding:9px 16px; border-radius:10px; border:1px solid var(--line);
+           background:#fff; font-size:14px; cursor:pointer; color:var(--txt); }
+  button.primary { background:var(--brand); border-color:var(--brand); color:#fff; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  input { padding:9px 12px; border:1px solid var(--line); border-radius:10px; font-size:14px; width:120px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { text-align:left; padding:9px 8px; border-bottom:1px solid var(--line); }
+  th { color:var(--sub); font-weight:500; font-size:12px; }
+  td.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:6px; background:#eef2ff; color:#4250b5; font-size:12px; }
+  .me { display:flex; gap:18px; flex-wrap:wrap; align-items:baseline; }
+  .me b { font-size:26px; font-variant-numeric:tabular-nums; }
+  .note { color:var(--sub); font-size:12px; margin-top:10px; line-height:1.6; }
+  .empty { color:var(--sub); font-size:13px; padding:8px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>合成大奶娃 · 书院积分榜</h1>
+  <div class="sub">北京师范大学珠海校区 · 积分永久累积 · 书院总分取该书院前 20 人（每人单局最高分）之和</div>
+
+  <div class="card">
+    <h2>我的身份</h2>
+    <div id="me" class="me"><div class="empty">还没选择书院</div></div>
+    <div class="row" style="margin-top:14px">
+      <button class="primary" id="btn-pick">设置 / 找回身份</button>
+      <button id="btn-refresh">刷新</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>模拟提交一局成绩</h2>
+    <div class="row">
+      <input id="score" type="number" value="3200" placeholder="分数">
+      <input id="drops" type="number" value="45" placeholder="投放次数">
+      <input id="dur" type="number" value="90000" placeholder="时长ms">
+      <button class="primary" id="btn-submit">提交</button>
+    </div>
+    <div class="note" id="submit-note">
+      真实接入时由 game.js 在结算时调用 <code>BNW.submit({score, drops, durationMs})</code>。
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>书院榜</h2>
+    <div id="college-board"><div class="empty">加载中…</div></div>
+  </div>
+
+  <div class="card">
+    <h2>各书院前 20 名明细</h2>
+    <div class="row" style="margin-bottom:12px" id="tabs"></div>
+    <div id="college-detail"><div class="empty">加载中…</div></div>
+  </div>
+</div>
+
+<script src="backend.js"></script>
+<script>
+  var $ = function (id) { return document.getElementById(id); };
+
+  function renderMe() {
+    var p = BNW.me();
+    var box = $('me');
+    if (!p || !p.uid) {
+      box.innerHTML = '<div class="empty">还没选择书院，点下面的按钮设置</div>';
+      return;
+    }
+    box.innerHTML = '';
+    var nick = document.createElement('div');
+    nick.innerHTML = '<div class="sub" style="font-size:12px">昵称</div><b style="font-size:18px"></b>';
+    nick.querySelector('b').textContent = p.nickname;
+    var col = document.createElement('div');
+    col.innerHTML = '<div class="sub" style="font-size:12px">书院 / 年级</div><span class="tag"></span>';
+    col.querySelector('span').textContent = p.college + ' · ' + p.grade;
+    var pts = document.createElement('div');
+    pts.innerHTML = '<div class="sub" style="font-size:12px">当前分</div><b></b>';
+    pts.querySelector('b').textContent = p.lastScore || 0;
+    var best = document.createElement('div');
+    best.innerHTML = '<div class="sub" style="font-size:12px">我的最高分</div><b></b>';
+    best.querySelector('b').textContent = p.bestScore || 0;
+    var plays = document.createElement('div');
+    plays.innerHTML = '<div class="sub" style="font-size:12px">完成局数</div><span></span>';
+    plays.querySelector('span').textContent = p.plays;
+    [nick, col, pts, best, plays].forEach(function (n) { box.appendChild(n); });
+
+    if (BNW.pendingCount() > 0) {
+      var q = document.createElement('div');
+      q.innerHTML = '<div class="sub" style="font-size:12px">待补交</div><span></span>';
+      q.querySelector('span').textContent = BNW.pendingCount() + ' 局';
+      box.appendChild(q);
+    }
+  }
+
+  function table(head, rows) {
+    var t = document.createElement('table');
+    var thead = document.createElement('thead');
+    var tr = document.createElement('tr');
+    head.forEach(function (h) {
+      var th = document.createElement('th');
+      th.textContent = h.label;
+      if (h.num) th.style.textAlign = 'right';
+      tr.appendChild(th);
+    });
+    thead.appendChild(tr);
+    t.appendChild(thead);
+    var tb = document.createElement('tbody');
+    if (!rows.length) {
+      var e = document.createElement('tr');
+      var td = document.createElement('td');
+      td.colSpan = head.length;
+      td.className = 'empty';
+      td.textContent = '暂无数据';
+      e.appendChild(td); tb.appendChild(e);
+    }
+    rows.forEach(function (r) {
+      var row = document.createElement('tr');
+      r.forEach(function (v, i) {
+        var td = document.createElement('td');
+        if (head[i].num) td.className = 'num';
+        td.textContent = v;
+        row.appendChild(td);
+      });
+      tb.appendChild(row);
+    });
+    t.appendChild(tb);
+    return t;
+  }
+
+  function renderColleges(data) {
+    var rows = data.board.map(function (c, i) {
+      return [i + 1, c.college, c.players + ' 人', '计入 ' + c.counted + ' 人', c.total];
+    });
+    var box = $('college-board');
+    box.innerHTML = '';
+    box.appendChild(table(
+      [{ label: '#' }, { label: '书院' }, { label: '参与人数' }, { label: '计入前 ' + data.topN + ' 人' }, { label: '总分', num: true }],
+      rows
+    ));
+    var note = document.createElement('div');
+    note.className = 'note';
+    note.textContent = '书院总分 = 该书院单局最高分最高的前 ' + data.topN +
+      ' 人分数之和。每人只占一个坑（用其单局最高分）。';
+    box.appendChild(note);
+  }
+
+  var currentCollege = null;
+
+  function renderTabs(board) {
+    var box = $('tabs');
+    box.innerHTML = '';
+    if (!currentCollege) currentCollege = (board[0] && board[0].college) || '乐育';
+    board.forEach(function (c) {
+      var b = document.createElement('button');
+      b.textContent = c.college;
+      if (c.college === currentCollege) {
+        b.className = 'primary';
+      }
+      b.onclick = function () {
+        currentCollege = c.college;
+        renderTabs(lastBoard);
+        loadDetail();
+      };
+      box.appendChild(b);
+    });
+  }
+
+  function renderDetail(data) {
+    var rows = data.entries.map(function (e) {
+      return [e.rank, e.nickname, e.grade, e.score, new Date(e.at).toLocaleString('zh-CN')];
+    });
+    var box = $('college-detail');
+    box.innerHTML = '';
+    box.appendChild(table(
+      [{ label: '名次' }, { label: '昵称' }, { label: '年级' }, { label: '本局积分', num: true }, { label: '时间' }],
+      rows
+    ));
+    var note = document.createElement('div');
+    note.className = 'note';
+    note.textContent = data.college + ' 前 ' + data.entries.length + ' 人（各取单局最高分）合计 ' + data.total + ' 分。';
+    box.appendChild(note);
+  }
+
+  function loadDetail() {
+    if (!currentCollege) return;
+    BNW.collegeDetail(currentCollege).then(renderDetail).catch(function () {});
+  }
+
+  var lastBoard = null;
+  function loadBoard() {
+    BNW.collegeBoard().then(function (data) {
+      lastBoard = data.board;
+      renderColleges(data);
+      renderTabs(data.board);
+      loadDetail();
+    }).catch(function () {});
+  }
+
+  $('btn-pick').onclick = function () {
+    BNW.showIdentityPicker().then(function () { renderMe(); loadBoard(); });
+  };
+  $('btn-refresh').onclick = function () {
+    BNW.refresh().then(function () { renderMe(); loadBoard(); }).catch(function () {});
+  };
+  $('btn-submit').onclick = function () {
+    var btn = this;
+    btn.disabled = true;
+    var note = $('submit-note');
+    if (!BNW.hasIdentity()) {
+      BNW.showIdentityPicker().then(function () {
+        renderMe();
+        note.textContent = '身份已设置，再点一次提交';
+        btn.disabled = false;
+      });
+      return;
+    }
+    var score = parseInt($('score').value, 10) || 0;
+    BNW.submit({
+      score: score,
+      drops: parseInt($('drops').value, 10) || 0,
+      durationMs: parseInt($('dur').value, 10) || 0,
+    }).then(function (r) {
+      note.textContent = '本局 ' + score + ' 分，当前分 ' + r.lastScore +
+        '，最高分 ' + r.bestScore + '，全校第 ' + r.rank + '，书院第 ' + r.collegeRank;
+      renderMe(); loadBoard();
+    }).catch(function (e) {
+      note.textContent = '提交失败：' + e.message + (e.queued ? '（已加入补交队列，联网后自动重试）' : '');
+    }).then(function () { btn.disabled = false; });
+  };
+
+  renderMe();
+  loadBoard();
+  setInterval(loadBoard, 20000);
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "bignaiwa-backend",
+  "version": "1.0.0",
+  "description": "合成大奶娃 · 北师珠书院积分榜（零依赖 Node 服务，含游戏前端）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "private": true
+}
