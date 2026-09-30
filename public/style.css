@@ -483,8 +483,8 @@ body {
 /* 标题右侧的校徽（已去白底，透明 PNG） */
 .title-emblem {
   flex: 0 0 auto;
-  width: 9px;
-  height: 9px;
+  width: 36px;
+  height: 36px;
   align-self: center;
   opacity: .95;
 }
@@ -838,7 +838,7 @@ body {
   .book-short { display: inline; }
   .book-link { padding: 5px 10px; font-size: 12px; }
   /* 手机上标题字被隐藏，相应缩小，别把顶栏撑爆 */
-  .title-emblem { width: 9px; height: 9px; }
+  .title-emblem { width: 36px; height: 36px; }
 
   .stats {
     flex: 1 1 auto;
