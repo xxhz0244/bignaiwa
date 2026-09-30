@@ -456,6 +456,36 @@ body::before {
 
 #submitBtn { margin-top: 9px; }
 
+/* ---------------- 玩法说明弹窗 ---------------- */
+
+.help-body {
+  flex: 1 1 auto;
+  min-height: 120px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 2px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--ink-soft);
+}
+
+.help-body h3 {
+  margin: 14px 0 5px;
+  font-size: 14px;
+  letter-spacing: .02em;
+  color: var(--ink);
+}
+
+.help-body h3:first-child { margin-top: 0; }
+
+.help-body p { margin: 0 0 4px; }
+
+.help-body ul { margin: 0 0 4px; padding-left: 18px; }
+
+.help-body li { margin: 2px 0; }
+
+.help-body b { color: var(--ink); font-weight: 700; }
+
 /* 排行榜弹窗里的昵称行 */
 .nick-row {
   display: flex;

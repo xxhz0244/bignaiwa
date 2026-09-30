@@ -1,7 +1,7 @@
 /* ============================================================
- *  合成大奶娃 · 赞助作者弹窗
- *  结算页点「☕ 赞助作者」弹出微信收款码。
- *  只是个静态弹窗，不涉及任何网络请求。
+ *  合成大奶娃 · 玩法说明弹窗
+ *  结算页点「❓ 玩法说明」弹出规则说明。
+ *  纯静态弹窗，不涉及任何网络请求。
  * ============================================================ */
 (function () {
   'use strict';
@@ -9,30 +9,30 @@
   const $ = (id) => document.getElementById(id);
 
   function open() {
-    const m = $('sponsorModal');
+    const m = $('helpModal');
     if (!m) return;
     m.classList.add('show');
     m.setAttribute('aria-hidden', 'false');
   }
 
   function close() {
-    const m = $('sponsorModal');
+    const m = $('helpModal');
     if (!m) return;
     m.classList.remove('show');
     m.setAttribute('aria-hidden', 'true');
   }
 
   function bind() {
-    const btn = $('sponsorBtn');
+    const btn = $('helpBtn');
     if (btn) btn.addEventListener('click', open);
 
-    const x = $('sponsorClose');
+    const x = $('helpClose');
     if (x) x.addEventListener('click', close);
 
-    const ok = $('sponsorOk');
+    const ok = $('helpOk');
     if (ok) ok.addEventListener('click', close);
 
-    const m = $('sponsorModal');
+    const m = $('helpModal');
     if (m) {
       m.addEventListener('click', (e) => { if (e.target === m) close(); });  // 点卡片外面关掉
     }
@@ -52,5 +52,5 @@
     bind();
   }
 
-  window.DanaiwaSponsor = { open: open, close: close };
+  window.DanaiwaHelp = { open: open, close: close };
 })();

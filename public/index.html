@@ -40,7 +40,7 @@
         <div class="dialog-actions">
           <button class="btn" id="boardBtn2" type="button">🏆 排行榜</button>
           <button class="btn btn-primary" id="restartBtn" type="button">再来一局</button>
-          <button class="btn btn-sponsor btn-wide" id="sponsorBtn" type="button">🌶️ 可以赏作者一包辣条嘛</button>
+          <button class="btn btn-wide" id="helpBtn" type="button">❓ 玩法说明</button>
         </div>
         <p class="dialog-hint">按 R 键也可重新开始</p>
       </div>
@@ -112,23 +112,31 @@
   </div>
 </div>
 
-<!-- ===== 赞助作者弹窗 ===== -->
-<div class="modal" id="sponsorModal" aria-hidden="true" role="dialog" aria-label="赞助作者">
+<!-- ===== 玩法说明弹窗（原赞助弹窗改造） ===== -->
+<div class="modal" id="helpModal" aria-hidden="true" role="dialog" aria-label="玩法说明">
   <div class="modal-card">
     <header class="modal-head">
-      <h2>🌶️ 请作者吃包辣条</h2>
-      <button class="icon-btn" id="sponsorClose" type="button" aria-label="关闭">✕</button>
+      <h2>❓ 玩法说明</h2>
+      <button class="icon-btn" id="helpClose" type="button" aria-label="关闭">✕</button>
     </header>
-    <div class="sponsor-body">
-      <p class="sponsor-note">这游戏完全免费，也没有任何广告。<br>
-        要是它逗你笑了一下，赏作者一包辣条呗 🌶️</p>
-      <img class="sponsor-qr" src="assets/sponsor-qr.jpg" width="480" height="480"
-           alt="微信收款码" loading="lazy" decoding="async">
-      <p class="sponsor-hint">微信扫一扫 · 一包辣条 · 全凭心意</p>
+    <div class="help-body">
+      <h3>怎么玩</h3>
+      <p>鼠标移动瞄准、点击投放；触屏拖动瞄准、松手投放。相同的娃撞在一起会合成更大的一只，越合越大、分越高。</p>
+      <h3>你的身份</h3>
+      <p>首次玩会让你填 <b>6 位专属 ID</b> + <b>中文昵称（1–5 字）</b>。ID 必填且全局唯一，换手机用同一个 ID 就能找回成绩；昵称一经设定不可修改。</p>
+      <h3>我的成绩</h3>
+      <ul>
+        <li><b>当前分</b>：最近这一局的得分</li>
+        <li><b>最高分</b>：你历史单局的最高分</li>
+      </ul>
+      <h3>书院榜</h3>
+      <p>五大书院：<b>乐育、会同、知行、弘文、砺行</b>。每人只用「单局最高分」占榜，按书院总分排名。</p>
+      <h3>关于</h3>
+      <p>本游戏为北京师范大学珠海校区校内娱乐，数据与成绩仅用于书院榜排名。</p>
     </div>
     <footer class="modal-foot">
-      <span class="board-note">谢谢每一位投喂的玩家 ❤️</span>
-      <button class="btn" id="sponsorOk" type="button">关闭</button>
+      <span class="board-note">祝你在书院榜上合出大名堂 🐣</span>
+      <button class="btn" id="helpOk" type="button">知道啦</button>
     </footer>
   </div>
 </div>
