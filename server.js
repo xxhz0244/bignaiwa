@@ -385,6 +385,11 @@ const server = http.createServer(async (req, res) => {
   if (p.startsWith('/api/')) return err(res, 404, '接口不存在');
   serveStatic(req, res, p);
 });
+//微信域名校验
+app.get('/4276fc9a204622419dfa63872fc02824.txt', (req, res) => {
+  res.setHeader('Content-Type','text/plain');
+  res.send('0805e9037e78b3181ec5d9d1828d4390d6d34afe');
+});
 
 server.listen(process.env.PORT || CFG.PORT, () => {
   console.log(`[server] BigNaiWa 积分后端已启动： http://localhost:${process.env.PORT || CFG.PORT}`);
