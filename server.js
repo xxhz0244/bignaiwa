@@ -370,7 +370,13 @@ const server = http.createServer(async (req, res) => {
   const p = u.pathname;
   const query = Object.fromEntries(u.searchParams);
   const key = `${req.method} ${p}`;
-
+  
+ //微信域名校验
+if (p === '/4276fc9a204622419dfa63872fc02824.txt') {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('0805e9037e78b3181ec5d9d1828d4390d6d34afe');
+  return;
+}
   if (routes[key]) {
     let body = query;
     if (req.method === 'POST') {
@@ -383,12 +389,6 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (p.startsWith('/api/')) return err(res, 404, '接口不存在');
-  //微信域名校验
-if (p === '/4276fc9a204622419dfa63872fc02824.txt') {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('0805e9037e78b3181ec5d9d1828d4390d6d34afe');
-  return;
-}
   serveStatic(req, res, p);
 });
 server.listen(process.env.PORT || CFG.PORT, () => {
