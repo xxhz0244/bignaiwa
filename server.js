@@ -392,11 +392,6 @@ server.listen(process.env.PORT || CFG.PORT, () => {
   console.log(`[server] 书院： ${CFG.COLLEGES.join(' / ')}`);
   console.log(`[server] 书院榜规则：每个书院取单局最高分最高的前 ${CFG.TOP_N} 人，每人只占一个坑`);
 });
-//微信域名校验
-app.get('/4276fc9a204622419dfa63872fc02824.txt', (req, res) => {
-  res.setHeader('Content-Type','text/plain');
-  res.send('0805e9037e78b3181ec5d9d1828d4390d6d34afe');
-});
 function shutdown() {
   console.log('\n[server] 正在保存数据并退出...');
   try { store.flush(); } catch (e) { console.error(e); }
