@@ -397,6 +397,8 @@ function shutdown() {
   console.log('\n[server] 正在保存数据并退出...');
   try { store.flush(); } catch (e) { console.error(e); }
   process.exit(0);
-}
-process.on('SIGINT', shutdown);
-process.on('SIGTERM', shutdown);
+//微信域名校验
+app.get('/4276fc9a204622419dfa63872fc02824.txt', (req, res) => {
+  res.setHeader('Content-Type','text/plain');
+  res.send('0805e9037e78b3181ec5d9d1828d4390d6d34afe');
+});
